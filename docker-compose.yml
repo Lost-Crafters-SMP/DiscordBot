@@ -1,0 +1,6 @@
+version: '3.7'
+services:
+  discord-bot:
+    build: .
+    volumes:
+      - ./app/config:/app/config
