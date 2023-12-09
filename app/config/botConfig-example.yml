@@ -1,4 +1,6 @@
 token: <discord api token>
+pterodactylToken: <pterodactyl api token>
+pterodactylUrl: <pterodactyl url>
 whitelist:
   enabled: true
   whitelistChannelId: 1144376300790890567

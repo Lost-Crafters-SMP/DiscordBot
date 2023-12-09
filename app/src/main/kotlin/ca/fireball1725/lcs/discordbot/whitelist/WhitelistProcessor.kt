@@ -1,6 +1,7 @@
 package ca.fireball1725.lcs.discordbot.whitelist
 
 import ca.fireball1725.lcs.discordbot.botConfig
+import ca.fireball1725.lcs.discordbot.getPterodactyl
 import ca.fireball1725.lcs.discordbot.helpers.MinecraftUserObject
 import ca.fireball1725.lcs.discordbot.helpers.RoleHelper
 import dev.kord.core.entity.ReactionEmoji
@@ -22,10 +23,8 @@ class WhitelistProcessor {
             return
 
         // todo: add logging maybe
-        println("Emoji Name: ${reactionAddEvent.emoji.name}")
 
         val userName = reactionAddEvent.getMessage().content
-        println("Whitelist: $userName")
 
         // Take an action depending on the emoji
         when(reactionAddEvent.emoji.name) {
@@ -84,7 +83,17 @@ class WhitelistProcessor {
             return
         }
 
-        // todo: actually whitelist here ...
+        // todo: actually do stuff with databases
+
+        getPterodactyl().sendCommand("b1107111", "/whitelist add ${username}") // SMP server
+        getPterodactyl().sendCommand("80966603", "/whitelist add ${username}") // Creative server
+        getPterodactyl().sendCommand("7f01a766", "/whitelist add ${username}") // Vault hunters
+
+        if (accountType == MemberType.CAMERA_ACCOUNT) {
+            // If the user is a camera account, add to the camera group on luck perms and also assign the [CAM] scoreboard
+            getPterodactyl().sendCommand("b1107111", "/lp user ${minecraftUser.data.player.id} group add camera")
+            getPterodactyl().sendCommand("b1107111", "/scoreboard players set ${username} player_tags 99")
+        }
 
         reactionAddEvent.getMessage().addReactions(ReactionEmoji.from(successEmoji))
     }

@@ -2,6 +2,7 @@ package ca.fireball1725.lcs.discordbot
 
 import ca.fireball1725.lcs.discordbot.data.BotConfig
 import ca.fireball1725.lcs.discordbot.data.Configuration
+import ca.fireball1725.lcs.discordbot.mcserver.Pterodactyl
 import ca.fireball1725.lcs.discordbot.services.BotPermissions
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
@@ -21,6 +22,8 @@ import java.nio.file.Path
 
 private val configPath = FileSystems.getDefault().getPath("config", "botConfig.yml")
 private val botConfig: BotConfig = loadConfigFromFile(configPath)
+
+private val pterodactyl: Pterodactyl = Pterodactyl(botConfig.pterodactylToken, botConfig.pterodactylUrl)
 
 class App {
     val greeting: String
@@ -115,4 +118,8 @@ private fun loadConfigFromFile(path: Path): BotConfig {
 
 fun botConfig(): BotConfig {
     return botConfig
+}
+
+fun getPterodactyl(): Pterodactyl {
+    return pterodactyl
 }
