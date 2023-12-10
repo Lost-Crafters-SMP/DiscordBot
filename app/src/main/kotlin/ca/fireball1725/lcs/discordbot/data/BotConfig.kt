@@ -4,5 +4,6 @@ data class BotConfig(
     val token: String,
     val pterodactylToken: String,
     val pterodactylUrl: String,
-    val whitelist: BotConfigWhitelist
+    val whitelist: BotConfigWhitelist,
+    val enableBackupDownloads: Boolean
 )

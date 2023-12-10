@@ -1,5 +1,6 @@
 package ca.fireball1725.lcs.discordbot.listeners
 
+import ca.fireball1725.lcs.discordbot.botConfig
 import ca.fireball1725.lcs.discordbot.commands.DownloadBackup
 import ca.fireball1725.lcs.discordbot.getServers
 import me.jakejmattson.discordkt.arguments.ChoiceArg
@@ -10,7 +11,7 @@ fun registerGeneralCommands() = commands("general") {
     val downloadWorldSaveServers = getServers().filter { (_, server) -> server.isBackupDownloadEnabled() }
         .map { (_, server) -> server.getServerPrettyName() }
 
-    if (false) {
+    if (botConfig().enableBackupDownloads) {
         slash("DownloadWorldSave", "Get a link to download the last backup from the minecraft server") {
             execute(ChoiceArg("Server", "Select the server", *downloadWorldSaveServers.toTypedArray())) {
                 val (first) = args

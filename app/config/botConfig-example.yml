@@ -5,3 +5,4 @@ whitelist:
   enabled: true
   whitelistChannelId: 1144376300790890567
   whitelistAuthorizedRoleId: 1143743030541680664 # Server Operators
+enableBackupDownloads: true
