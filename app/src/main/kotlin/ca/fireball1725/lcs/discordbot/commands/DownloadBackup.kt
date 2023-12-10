@@ -37,7 +37,7 @@ class DownloadBackup {
         resultString += "Backup completed at: <t:${unixTimeStamp}:f>\n"
         resultString += "Filesize: ${MathHelper().humanReadableFileSize(lastBackup!!.bytes!!)}\n"
         resultString += "[Download](<${downloadUrl}>)\n"
-        resultString += "_(download link is a one time use and is valid for 15 minutes)_"
+        resultString += "_(download link is one time use and is valid for 15 minutes)_"
         return resultString
     }
 }
