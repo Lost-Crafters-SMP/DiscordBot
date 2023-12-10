@@ -3,6 +3,7 @@ package ca.fireball1725.lcs.discordbot
 import ca.fireball1725.lcs.discordbot.data.BotConfig
 import ca.fireball1725.lcs.discordbot.data.Configuration
 import ca.fireball1725.lcs.discordbot.mcserver.Pterodactyl
+import ca.fireball1725.lcs.discordbot.mcserver.Server
 import ca.fireball1725.lcs.discordbot.services.BotPermissions
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
@@ -25,15 +26,33 @@ private val botConfig: BotConfig = loadConfigFromFile(configPath)
 
 private val pterodactyl: Pterodactyl = Pterodactyl(botConfig.pterodactylToken, botConfig.pterodactylUrl)
 
-class App {
-    val greeting: String
-        get() {
-            return "Hello World!"
-        }
-}
+private val servers: MutableMap<String, Server> = mutableMapOf()
 
 @KordPreview
 suspend fun main(args: Array<String>) {
+    // todo: Load the servers from database
+    servers["b1107111"] = Server(
+        "b1107111",
+        "SMP Season 1",
+        whitelistCameraEnabled = true,
+        backupDownloadEnabled = true
+    )
+
+    servers["80966603"] = Server(
+        "80966603",
+        "Creative Test Server"
+    )
+
+    servers["7f01a766"] = Server(
+        "7f01a766",
+        "Vault Hunters"
+    )
+
+    servers["e932250f"] = Server(
+        "e932250f",
+        "FTB Arcanum Institution"
+    )
+
     //println(App().greeting)
     bot(botConfig.token) {
         val configuration = data("config/config.json") { Configuration() }
@@ -122,4 +141,15 @@ fun botConfig(): BotConfig {
 
 fun getPterodactyl(): Pterodactyl {
     return pterodactyl
+}
+
+fun getServers(): MutableMap<String, Server> {
+    return servers
+}
+
+fun getServer(serverId: String): Server? {
+    return if (serverId.contains(serverId))
+        servers[serverId]
+    else
+        null
 }

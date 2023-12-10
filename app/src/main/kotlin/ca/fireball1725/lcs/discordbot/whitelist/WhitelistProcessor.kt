@@ -2,7 +2,8 @@ package ca.fireball1725.lcs.discordbot.whitelist
 
 import ca.fireball1725.lcs.discordbot.botConfig
 import ca.fireball1725.lcs.discordbot.getPterodactyl
-import ca.fireball1725.lcs.discordbot.helpers.MinecraftUserObject
+import ca.fireball1725.lcs.discordbot.getServers
+import ca.fireball1725.lcs.discordbot.helpers.MinecraftUserHelper
 import ca.fireball1725.lcs.discordbot.helpers.RoleHelper
 import dev.kord.core.entity.ReactionEmoji
 import dev.kord.core.event.message.ReactionAddEvent
@@ -26,6 +27,8 @@ class WhitelistProcessor {
 
         val userName = reactionAddEvent.getMessage().content
 
+        // todo: validate the message doesn't have a ✅ from the bot already
+        
         // Take an action depending on the emoji
         when(reactionAddEvent.emoji.name) {
             "\uD83D\uDC4D" -> { // Thumbs Up
@@ -69,7 +72,7 @@ class WhitelistProcessor {
         val successEmoji = Emojis["✅"]!!
 
         // Convert minecraft username to uuid
-        val minecraftUser = MinecraftUserObject().getMinecraftUserFromUsername(username)
+        val minecraftUser = MinecraftUserHelper().getMinecraftUserFromUsername(username)
 
         // validate that we have a valid minecraft user
         if (minecraftUser == null) {
@@ -83,16 +86,30 @@ class WhitelistProcessor {
             return
         }
 
-        // todo: actually do stuff with databases
+        // whitelist server account
+        getServers().forEach { (_, server) ->
+            if (server.isWhitelistPlayerEnabled()) {
+                getPterodactyl().sendCommand(
+                    server.getServerId(),
+                    "/whitelist add ${username}"
+                )
+            }
+        }
 
-        getPterodactyl().sendCommand("b1107111", "/whitelist add ${username}") // SMP server
-        getPterodactyl().sendCommand("80966603", "/whitelist add ${username}") // Creative server
-        getPterodactyl().sendCommand("7f01a766", "/whitelist add ${username}") // Vault hunters
-
+        // whitelist camera account
         if (accountType == MemberType.CAMERA_ACCOUNT) {
-            // If the user is a camera account, add to the camera group on luck perms and also assign the [CAM] scoreboard
-            getPterodactyl().sendCommand("b1107111", "/lp user ${minecraftUser.data.player.id} group add camera")
-            getPterodactyl().sendCommand("b1107111", "/scoreboard players set ${username} player_tags 99")
+            getServers().forEach { (_, server) ->
+                if (server.isWhitelistCameraEnabled()) {
+                    getPterodactyl().sendCommand(
+                        server.getServerId(),
+                        "/lp user ${minecraftUser.data.player.id} group add camera"
+                    )
+                    getPterodactyl().sendCommand(
+                        server.getServerId(),
+                        "/scoreboard players set ${username} player_tags 99"
+                    )
+                }
+            }
         }
 
         reactionAddEvent.getMessage().addReactions(ReactionEmoji.from(successEmoji))

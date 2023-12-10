@@ -5,7 +5,7 @@ import com.google.gson.Gson
 import okhttp3.*
 import java.util.UUID
 
-class MinecraftUserObject {
+class MinecraftUserHelper {
     private val client = OkHttpClient()
 
     fun getMinecraftUserFromUsername(username: String): MinecraftUser? {
