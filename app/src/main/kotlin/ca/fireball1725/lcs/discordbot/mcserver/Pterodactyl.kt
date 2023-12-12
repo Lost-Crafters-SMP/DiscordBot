@@ -17,27 +17,32 @@ import okhttp3.Response
 import java.io.IOException
 
 class Pterodactyl(
-        private val apiKey: String,
-        private val serverUrl: String
-    ) {
+    private val apiKey: String,
+    private val serverUrl: String,
+) {
     private val client = OkHttpClient()
 
-    fun sendCommand(serverId: String, command: String) {
-        val commandUrl = "${serverUrl}/api/client/servers/${serverId}/command"
+    fun sendCommand(
+        serverId: String,
+        command: String,
+    ) {
+        val commandUrl = "$serverUrl/api/client/servers/$serverId/command"
 
-        val json = """
+        val json =
+            """
             {
               "command": "$command"
             }
-        """.trimIndent()
+            """.trimIndent()
 
-        val request = Request.Builder()
-            .url(commandUrl)
-            .addHeader("Content-Type", "application/json")
-            .addHeader("Accept", "application/json")
-            .addHeader("Authorization", "Bearer $apiKey")
-            .post(json.toRequestBody(MEDIA_TYPE_JSON))
-            .build()
+        val request =
+            Request.Builder()
+                .url(commandUrl)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "application/json")
+                .addHeader("Authorization", "Bearer $apiKey")
+                .post(json.toRequestBody(MEDIA_TYPE_JSON))
+                .build()
 
         val response = processRequest(request)
 
@@ -47,23 +52,26 @@ class Pterodactyl(
     fun getServerBackup(serverId: String): GetWorldBackup? {
         val commandUrl = "$serverUrl/api/client/servers/$serverId/backups"
 
-        val request = Request.Builder()
-            .url(commandUrl)
-            .addHeader("Content-Type", "application/json")
-            .addHeader("Accept", "application/json")
-            .addHeader("Authorization", "Bearer $apiKey")
-            .get()
-            .build()
+        val request =
+            Request.Builder()
+                .url(commandUrl)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "application/json")
+                .addHeader("Authorization", "Bearer $apiKey")
+                .get()
+                .build()
 
         val response = client.newCall(request).execute()
 
         if (!response.isSuccessful) throw IOException("Unexpected code $response")
 
-        if (response.code != 200)
+        if (response.code != 200) {
             return null
+        }
 
-        if (response.body == null)
+        if (response.body == null) {
             return null
+        }
 
         val downloadBackupResponse = Gson().fromJson(response.body!!.string(), GetWorldBackup::class.java)
 
@@ -72,28 +80,34 @@ class Pterodactyl(
         return downloadBackupResponse
     }
 
-    fun getDownloadBackup(serverId: String, backupId: String): String? {
+    fun getDownloadBackup(
+        serverId: String,
+        backupId: String,
+    ): String? {
         val commandUrl = "$serverUrl/api/client/servers/$serverId/backups/$backupId/download"
 
-        val request = Request.Builder()
-            .url(commandUrl)
+        val request =
+            Request.Builder()
+                .url(commandUrl)
 //            .addHeader("Content-Type", "application/json")
 //            .addHeader("Accept", "application/json")
-            .addHeader("Authorization", "Bearer $apiKey")
-            .get()
-            .build()
+                .addHeader("Authorization", "Bearer $apiKey")
+                .get()
+                .build()
 
         val response = client.newCall(request).execute()
 
         if (!response.isSuccessful) throw IOException("Unexpected code $response")
 
-        if (response.code != 200)
+        if (response.code != 200) {
             return null
+        }
 
-        if (response.body == null)
+        if (response.body == null) {
             return null
+        }
 
-        val downloadBackupResponse =  Gson().fromJson(response.body!!.string(), GetDownloadBackup::class.java)
+        val downloadBackupResponse = Gson().fromJson(response.body!!.string(), GetDownloadBackup::class.java)
 
         response.close()
 
@@ -118,6 +132,4 @@ class Pterodactyl(
     companion object {
         val MEDIA_TYPE_JSON = "application/json; charset=utf-8".toMediaType()
     }
-
 }
-

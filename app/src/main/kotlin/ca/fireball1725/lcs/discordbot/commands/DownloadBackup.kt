@@ -25,12 +25,14 @@ class DownloadBackup {
         var lastBackup: GetWorldBackupDataAttributes? = null
         backups!!.worldBackupData.forEach {
             lastBackup = it.worldBackupDataAttributes
-            if (it.worldBackupDataAttributes.isSuccessful != null && it.worldBackupDataAttributes.isSuccessful!!)
+            if (it.worldBackupDataAttributes.isSuccessful != null && it.worldBackupDataAttributes.isSuccessful!!) {
                 return@forEach
+            }
         }
 
-        if (lastBackup == null)
+        if (lastBackup == null) {
             return null
+        }
 
         val downloadUrl = getPterodactyl().getDownloadBackup(serverId, lastBackup!!.uuid!!)
 
@@ -40,9 +42,9 @@ class DownloadBackup {
 
         var resultString = ""
         resultString += "# ${server!!.getServerPrettyName()} World Backup\n"
-        resultString += "Backup completed at: <t:${unixTimeStamp}:f>\n"
+        resultString += "Backup completed at: <t:$unixTimeStamp:f>\n"
         resultString += "Filesize: ${MathHelper().humanReadableFileSize(lastBackup!!.bytes!!)}\n"
-        resultString += "[Download](<${downloadUrl}>)\n"
+        resultString += "[Download](<$downloadUrl>)\n"
         resultString += "_(download link is one time use and is valid for 15 minutes)_"
         return resultString
     }

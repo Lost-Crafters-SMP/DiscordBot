@@ -12,8 +12,9 @@ import ca.fireball1725.lcs.discordbot.mcserver.Server
 class ServerHelper {
     fun getServerIdFromPrettyName(prettyName: String): String? {
         getServers().forEach { (_, server) ->
-            if (server.getServerPrettyName().equals(prettyName))
+            if (server.getServerPrettyName().equals(prettyName)) {
                 return server.getServerId()
+            }
         }
 
         return null
@@ -21,8 +22,9 @@ class ServerHelper {
 
     fun getServerFromPrettyName(prettyName: String): Server? {
         getServers().forEach { (_, server) ->
-            if (server.getServerPrettyName().equals(prettyName))
+            if (server.getServerPrettyName().equals(prettyName)) {
                 return server
+            }
         }
 
         return null

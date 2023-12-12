@@ -15,17 +15,20 @@ class MinecraftUserHelper {
     private val client = OkHttpClient()
 
     fun getMinecraftUserFromUsername(username: String): MinecraftUser? {
-        val url = "https://playerdb.co/api/player/minecraft/${username}"
+        val url = "https://playerdb.co/api/player/minecraft/$username"
 
-        val request = Request.Builder()
-            .url(url)
-            .addHeader("Content-Type","application/json")
-            .build()
+        val request =
+            Request.Builder()
+                .url(url)
+                .addHeader("Content-Type", "application/json")
+                .build()
 
         val response = client.newCall(request).execute()
 
-        if (response.code != 200) // if the response isn't 200 OK then return null
+        if (response.code != 200) {
+            // if the response isn't 200 OK then return null
             return null
+        }
 
         val minecraftUserObject = Gson().fromJson(response.body!!.string(), MinecraftUser::class.java)
 

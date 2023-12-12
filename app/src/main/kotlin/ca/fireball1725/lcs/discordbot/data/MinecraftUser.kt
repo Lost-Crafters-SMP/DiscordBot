@@ -10,5 +10,5 @@ data class MinecraftUser(
     val code: String,
     val message: String,
     val data: MinecraftUserData,
-    val success: Boolean
+    val success: Boolean,
 )

@@ -12,10 +12,11 @@ import dev.kord.core.event.message.ReactionAddEvent
 import dev.kord.core.event.message.ReactionRemoveEvent
 import me.jakejmattson.discordkt.dsl.listeners
 
-fun registerListeners() = listeners {
-    // Whitelist
-    if (botConfig().whitelist.enabled) {
-        on<ReactionAddEvent> { WhitelistProcessor().reactionAddEvent(this) }
-        on<ReactionRemoveEvent> { WhitelistProcessor().reactionRemoveEvent(this) }
+fun registerListeners() =
+    listeners {
+        // Whitelist
+        if (botConfig().whitelist!!.enabled) {
+            on<ReactionAddEvent> { WhitelistProcessor().reactionAddEvent(this) }
+            on<ReactionRemoveEvent> { WhitelistProcessor().reactionRemoveEvent(this) }
+        }
     }
-}

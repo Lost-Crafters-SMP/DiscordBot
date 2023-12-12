@@ -11,8 +11,8 @@ class Server(
     private val serverPrettyName: String,
     private val whitelistPlayerEnabled: Boolean = true,
     private val whitelistCameraEnabled: Boolean = false,
-    private val backupDownloadEnabled: Boolean = false
-){
+    private val backupDownloadEnabled: Boolean = false,
+) {
     fun getServerId(): String {
         return this.serverId
     }

@@ -38,29 +38,40 @@ private val servers: MutableMap<String, Server> = mutableMapOf()
 @KordPreview
 suspend fun main(args: Array<String>) {
     // todo: Load the servers from database
-    servers["b1107111"] = Server(
-        "b1107111",
-        "SMP Season 1",
-        whitelistCameraEnabled = true,
-        backupDownloadEnabled = true
-    )
+    servers["b1107111"] =
+        Server(
+            "b1107111",
+            "SMP Season 1",
+            whitelistCameraEnabled = true,
+            backupDownloadEnabled = true,
+        )
 
-    servers["80966603"] = Server(
-        "80966603",
-        "Creative Test Server"
-    )
+    servers["80966603"] =
+        Server(
+            "80966603",
+            "Creative Test Server",
+        )
 
-    servers["7f01a766"] = Server(
-        "7f01a766",
-        "Vault Hunters"
-    )
+    servers["7f01a766"] =
+        Server(
+            "7f01a766",
+            "Vault Hunters",
+        )
 
-    servers["e932250f"] = Server(
-        "e932250f",
-        "FTB Arcanum Institution"
-    )
+    servers["e932250f"] =
+        Server(
+            "e932250f",
+            "FTB Arcanum Institution",
+        )
 
-    //println(App().greeting)
+    val prop = System.getProperties()
+
+    println(">>> Properties:")
+    prop.stringPropertyNames()
+        .associateWith { prop.getProperty(it) }
+        .forEach { println(">>> $it") }
+
+    // println(App().greeting)
     bot(botConfig.discordToken) {
         val configuration = data("config/config.json") { Configuration() }
 
@@ -69,43 +80,44 @@ suspend fun main(args: Array<String>) {
         }
 
         configure {
-            //Allow a mention to be used in front of commands ('@Bot help').
+            // Allow a mention to be used in front of commands ('@Bot help').
             mentionAsPrefix = true
 
-            //Whether to show registered entity information on startup.
+            // Whether to show registered entity information on startup.
             logStartup = true
 
-            //Whether to generate documentation for registered commands.
+            // Whether to generate documentation for registered commands.
             documentCommands = true
 
-            //Whether to recommend commands when an invalid one is invoked.
+            // Whether to recommend commands when an invalid one is invoked.
             recommendCommands = true
 
-            //Allow users to search for a command by typing 'search <command name>'.
+            // Allow users to search for a command by typing 'search <command name>'.
             searchCommands = true
 
-            //Remove a command invocation message after the command is executed.
+            // Remove a command invocation message after the command is executed.
             deleteInvocation = true
 
-            //Allow slash commands to be invoked as text commands.
+            // Allow slash commands to be invoked as text commands.
             dualRegistry = true
 
-            //An emoji added when a command is invoked (use 'null' to disable this).
+            // An emoji added when a command is invoked (use 'null' to disable this).
             commandReaction = Emojis.eyes
 
-            //A color constant for your bot - typically used in embeds.
+            // A color constant for your bot - typically used in embeds.
             theme = Color(0xFF69B4)
 
-            //Configure the Discord Gateway intents for your bot.
+            // Configure the Discord Gateway intents for your bot.
             intents = Intents.nonPrivileged
 
-            //Set the default permission required for slash commands.
+            // Set the default permission required for slash commands.
             defaultPermissions = BotPermissions.EVERYONE
         }
 
         onException {
-            if (exception is IllegalArgumentException)
+            if (exception is IllegalArgumentException) {
                 return@onException
+            }
 
             when (this) {
                 is CommandException -> println("Exception '${exception::class.simpleName}' in command ${event.command?.name}")
@@ -113,18 +125,18 @@ suspend fun main(args: Array<String>) {
             }
         }
 
-        //The Discord presence shown on your bot.
+        // The Discord presence shown on your bot.
         presence {
             playing("Lost Crafters SMP Discord Bot - v0.1.0")
         }
 
-        //This is run once the bot has finished setup and logged in.
+        // This is run once the bot has finished setup and logged in.
         onStart {
             val guilds = kord.guilds.toList()
             println("Guilds: ${guilds.joinToString { it.name }}")
         }
 
-        //Configure the locale for this bot.
+        // Configure the locale for this bot.
         localeOf(Language.EN) {
             helpName = "Help"
             helpCategory = "Utility"
@@ -141,9 +153,9 @@ private fun loadConfigFromFile(path: Path): BotConfig {
             .configure(KotlinFeature.NullToEmptyCollection, false)
             .configure(KotlinFeature.NullToEmptyMap, false)
             .configure(KotlinFeature.NullIsSameAsDefault, false)
-            .configure(KotlinFeature.SingletonSupport, false)
+            .configure(KotlinFeature.SingletonSupport, true)
             .configure(KotlinFeature.StrictNullChecks, false)
-            .build()
+            .build(),
     )
 
     return Files.newBufferedReader(path).use {
@@ -164,8 +176,9 @@ fun getServers(): MutableMap<String, Server> {
 }
 
 fun getServer(serverId: String): Server? {
-    return if (serverId.contains(serverId))
+    return if (serverId.contains(serverId)) {
         servers[serverId]
-    else
+    } else {
         null
+    }
 }

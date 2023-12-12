@@ -15,22 +15,23 @@ import me.jakejmattson.discordkt.extensions.pfpUrl
 @Serializable
 data class Configuration(
     val botOwner: Snowflake = Snowflake(93194491795607552),
-    val prefix: String = "smp!"
+    val prefix: String = "smp!",
 ) : Data()
 
-fun dataCommands(configuration: Configuration) = commands("Info") {
-    slash("BotInfo", "Display bot information") {
-        execute {
-            val owner = discord.kord.getUser(configuration.botOwner)!!
+fun dataCommands(configuration: Configuration) =
+    commands("Info") {
+        slash("BotInfo", "Display bot information") {
+            execute {
+                val owner = discord.kord.getUser(configuration.botOwner)!!
 
-            respond {
-                title = owner.username
-                description = "Todo, something useful"
+                respond {
+                    title = owner.username
+                    description = "Todo, something useful"
 
-                thumbnail {
-                    url = owner.pfpUrl
+                    thumbnail {
+                        url = owner.pfpUrl
+                    }
                 }
             }
         }
     }
-}
