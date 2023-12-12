@@ -22,5 +22,5 @@ jobs:
 
       - name: Run ktlint
         run: |
-          curl -sSLO https://github.com/pinterest/ktlint/releases/download/0.43.2/ktlint && chmod a+x ktlint
+          curl -sSLO https://github.com/pinterest/ktlint/releases/download/1.0.1/ktlint && chmod a+x ktlint
           ./ktlint
