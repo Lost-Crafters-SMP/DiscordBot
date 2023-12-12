@@ -1,3 +1,9 @@
+/*
+ * Created for the Lost Crafters SMP (https://www.lostcrafterssmp.com)
+ * Licensed under the GNU Affero General Public License v3.0
+ * See LICENSE.txt for full license information
+ */
+
 package ca.fireball1725.lcs.discordbot.mcserver
 
 import ca.fireball1725.lcs.discordbot.data.pterodactyl.GetDownloadBackup
@@ -10,7 +16,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.io.IOException
 
-class Pterodactyl constructor(
+class Pterodactyl(
         private val apiKey: String,
         private val serverUrl: String
     ) {

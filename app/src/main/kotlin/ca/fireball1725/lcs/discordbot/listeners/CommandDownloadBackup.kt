@@ -1,3 +1,9 @@
+/*
+ * Created for the Lost Crafters SMP (https://www.lostcrafterssmp.com)
+ * Licensed under the GNU Affero General Public License v3.0
+ * See LICENSE.txt for full license information
+ */
+
 package ca.fireball1725.lcs.discordbot.listeners
 
 import ca.fireball1725.lcs.discordbot.botConfig
@@ -7,12 +13,14 @@ import me.jakejmattson.discordkt.arguments.ChoiceArg
 import me.jakejmattson.discordkt.commands.commands
 
 fun registerGeneralCommands() = commands("general") {
+    val prefix = if (botConfig().isDevelopmentEnvironment) "dev" else ""
+
     // Download world save
     val downloadWorldSaveServers = getServers().filter { (_, server) -> server.isBackupDownloadEnabled() }
         .map { (_, server) -> server.getServerPrettyName() }
 
-    if (botConfig().enableBackupDownloads) {
-        slash("DownloadWorldSave", "Get a link to download the last backup from the minecraft server") {
+    if (botConfig().backupDownload.enabled) {
+        slash(prefix+ "DownloadWorldSave", "Get a link to download the last backup from the minecraft server") {
             execute(ChoiceArg("Server", "Select the server", *downloadWorldSaveServers.toTypedArray())) {
                 val (first) = args
                 val result = DownloadBackup().GetWorldBackup(first)

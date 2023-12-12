@@ -1,12 +1,19 @@
+/*
+ * Created for the Lost Crafters SMP (https://www.lostcrafterssmp.com)
+ * Licensed under the GNU Affero General Public License v3.0
+ * See LICENSE.txt for full license information
+ */
+
 package ca.fireball1725.lcs.discordbot
 
-import ca.fireball1725.lcs.discordbot.data.BotConfig
 import ca.fireball1725.lcs.discordbot.data.Configuration
+import ca.fireball1725.lcs.discordbot.data.config.BotConfig
 import ca.fireball1725.lcs.discordbot.mcserver.Pterodactyl
 import ca.fireball1725.lcs.discordbot.mcserver.Server
 import ca.fireball1725.lcs.discordbot.services.BotPermissions
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import dev.kord.common.annotation.KordPreview
 import dev.kord.gateway.Intents
@@ -54,7 +61,7 @@ suspend fun main(args: Array<String>) {
     )
 
     //println(App().greeting)
-    bot(botConfig.token) {
+    bot(botConfig.discordToken) {
         val configuration = data("config/config.json") { Configuration() }
 
         prefix {
@@ -128,7 +135,16 @@ suspend fun main(args: Array<String>) {
 
 private fun loadConfigFromFile(path: Path): BotConfig {
     val mapper = ObjectMapper(YAMLFactory())
-    mapper.registerModule(KotlinModule())
+    mapper.registerModule(
+        KotlinModule.Builder()
+            .withReflectionCacheSize(512)
+            .configure(KotlinFeature.NullToEmptyCollection, false)
+            .configure(KotlinFeature.NullToEmptyMap, false)
+            .configure(KotlinFeature.NullIsSameAsDefault, false)
+            .configure(KotlinFeature.SingletonSupport, DISABLED)
+            .configure(KotlinFeature.StrictNullChecks, false)
+            .build()
+    )
 
     return Files.newBufferedReader(path).use {
         mapper.readValue(it, BotConfig::class.java)

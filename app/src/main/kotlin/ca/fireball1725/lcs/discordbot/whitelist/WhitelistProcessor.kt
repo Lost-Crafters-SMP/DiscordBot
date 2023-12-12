@@ -1,3 +1,9 @@
+/*
+ * Created for the Lost Crafters SMP (https://www.lostcrafterssmp.com)
+ * Licensed under the GNU Affero General Public License v3.0
+ * See LICENSE.txt for full license information
+ */
+
 package ca.fireball1725.lcs.discordbot.whitelist
 
 import ca.fireball1725.lcs.discordbot.botConfig
@@ -16,7 +22,7 @@ import me.jakejmattson.discordkt.extensions.sendPrivateMessage
 class WhitelistProcessor {
     suspend fun reactionAddEvent(reactionAddEvent: ReactionAddEvent) {
         // Validate that the message is in the whitelist channel
-        if (reactionAddEvent.channelId.value != botConfig().whitelist.whitelistChannelId.toULong())
+        if (reactionAddEvent.channelId.value != botConfig().whitelist.channelId.toULong())
             return
 
         // Validate that the user isn't the bot
@@ -55,7 +61,7 @@ class WhitelistProcessor {
         // Validate the user has permission to whitelist a user
         val inGroup = RoleHelper().doesMemberHaveRole(
             reactionAddEvent.getUserAsMember(),
-            botConfig().whitelist.whitelistAuthorizedRoleId.toULong()
+            botConfig().whitelist.authorizedRoleId.toULong()
         )
 
         // if the user isn't authorized let them know and remove the reaction
