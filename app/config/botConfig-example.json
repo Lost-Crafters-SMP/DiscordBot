@@ -1,0 +1,14 @@
+{
+  "discord_token": "<discord bot token>",
+  "pterodactyl_token": "<pterodactyl api token>",
+  "pterodactyl_url": "<pterodactyl api url>",
+  "whitelist": {
+    "enabled": true,
+    "whitelist_channel_id": 1183054905913655399,
+    "whitelist_authorized_role_id": 1143743030541680664
+  },
+  "backup_download": {
+    "enabled": false
+  },
+  "is_dev_env": true
+}

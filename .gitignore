@@ -1,5 +1,5 @@
 # This contains secrets
-app/config/botConfig.yml
+app/config/botConfig.json
 
 # Created by https://www.toptal.com/developers/gitignore/api/kotlin,osx,windows,linux,intellij,gradle
 # Edit at https://www.toptal.com/developers/gitignore?templates=kotlin,osx,windows,linux,intellij,gradle

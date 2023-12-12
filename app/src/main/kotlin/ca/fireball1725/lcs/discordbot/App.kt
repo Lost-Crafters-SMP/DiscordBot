@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.google.gson.Gson
 import dev.kord.common.annotation.KordPreview
 import dev.kord.gateway.Intents
 import dev.kord.x.emoji.Emojis
@@ -24,12 +25,13 @@ import me.jakejmattson.discordkt.dsl.ListenerException
 import me.jakejmattson.discordkt.dsl.bot
 import me.jakejmattson.discordkt.locale.Language
 import java.awt.Color
+import java.io.Reader
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
 
-private val configPath = FileSystems.getDefault().getPath("config", "botConfig.yml")
-private val botConfig: BotConfig = loadConfigFromFile(configPath)
+private val configPath = FileSystems.getDefault().getPath("config", "botConfig.json")
+private val botConfig: BotConfig = loadBotConfig(configPath)
 
 private val pterodactyl: Pterodactyl = Pterodactyl(botConfig.pterodactylToken, botConfig.pterodactylUrl)
 
@@ -145,22 +147,9 @@ suspend fun main(args: Array<String>) {
     }
 }
 
-private fun loadConfigFromFile(path: Path): BotConfig {
-    val mapper = ObjectMapper(YAMLFactory())
-    mapper.registerModule(
-        KotlinModule.Builder()
-            .withReflectionCacheSize(512)
-            .configure(KotlinFeature.NullToEmptyCollection, false)
-            .configure(KotlinFeature.NullToEmptyMap, false)
-            .configure(KotlinFeature.NullIsSameAsDefault, false)
-            .configure(KotlinFeature.SingletonSupport, true)
-            .configure(KotlinFeature.StrictNullChecks, false)
-            .build(),
-    )
-
-    return Files.newBufferedReader(path).use {
-        mapper.readValue(it, BotConfig::class.java)
-    }
+private fun loadBotConfig(path: Path): BotConfig {
+    val reader: Reader = Files.newBufferedReader(path)
+    return Gson().fromJson(reader, BotConfig::class.java)
 }
 
 fun botConfig(): BotConfig {
