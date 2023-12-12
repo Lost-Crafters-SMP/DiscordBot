@@ -11,19 +11,14 @@ import com.google.gson.annotations.SerializedName
 data class BotConfig(
     @SerializedName("discord_token")
     val discordToken: String,
-
     @SerializedName("pterodactyl_token")
     val pterodactylToken: String,
-
     @SerializedName("pterodactyl_url")
     val pterodactylUrl: String,
-
     @SerializedName("is_dev_env")
     val isDevelopmentEnvironment: Boolean,
-
     @SerializedName("whitelist")
     val whitelist: BotConfigConfigWhitelist,
-
     @SerializedName("backup_download")
     val backupDownload: BotConfigConfigBackupDownload,
 )
@@ -31,10 +26,8 @@ data class BotConfig(
 data class BotConfigConfigWhitelist(
     @SerializedName("enabled")
     val enabled: Boolean,
-
     @SerializedName("whitelist_channel_id")
     val channelId: Long,
-
     @SerializedName("whitelist_authorized_role_id")
     val authorizedRoleId: Long,
 )

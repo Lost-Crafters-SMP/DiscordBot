@@ -16,7 +16,7 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 class DownloadBackup {
-    fun GetWorldBackup(server: String): String? {
+    fun getWorldBackup(server: String): String? {
         val serverId = ServerHelper().getServerIdFromPrettyName(server) ?: return null
         val server = getServer(serverId)
 

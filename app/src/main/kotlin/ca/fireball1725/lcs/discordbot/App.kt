@@ -11,10 +11,6 @@ import ca.fireball1725.lcs.discordbot.data.config.BotConfig
 import ca.fireball1725.lcs.discordbot.mcserver.Pterodactyl
 import ca.fireball1725.lcs.discordbot.mcserver.Server
 import ca.fireball1725.lcs.discordbot.services.BotPermissions
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.fasterxml.jackson.module.kotlin.KotlinFeature
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.google.gson.Gson
 import dev.kord.common.annotation.KordPreview
 import dev.kord.gateway.Intents

@@ -8,7 +8,8 @@ package ca.fireball1725.lcs.discordbot.helpers
 
 import ca.fireball1725.lcs.discordbot.data.MinecraftUser
 import com.google.gson.Gson
-import okhttp3.*
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import java.util.UUID
 
 class MinecraftUserHelper {
