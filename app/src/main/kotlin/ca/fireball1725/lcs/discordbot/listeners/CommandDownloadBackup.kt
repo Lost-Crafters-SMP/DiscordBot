@@ -25,7 +25,7 @@ fun registerGeneralCommands() =
             slash(prefix + "DownloadWorldSave", "Get a link to download the last backup from the minecraft server") {
                 execute(ChoiceArg("Server", "Select the server", *downloadWorldSaveServers.toTypedArray())) {
                     val (first) = args
-                    val result = DownloadBackup().GetWorldBackup(first)
+                    val result = DownloadBackup().getWorldBackup(first)
 
                     println("Result: $result")
 
