@@ -27,6 +27,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module", "jackson-module-kotlin", "2.16.+")
     implementation("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", "2.16.+")
 
+    implementation("org.postgresql:postgresql:42.7.1")
+
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation(libs.junit.jupiter.engine)
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

@@ -10,5 +10,10 @@
   "backup_download": {
     "enabled": false
   },
+  "database_configuration": {
+    "jdbc_url": "jdbc:postgresql://localhost:5432/lostcrafters_db",
+    "database_username": "Username",
+    "database_password": "P@ssword!"
+  },
   "is_dev_env": true
 }

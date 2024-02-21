@@ -6,6 +6,7 @@
 
 package ca.fireball1725.lcs.discordbot.mcserver
 
+import ca.fireball1725.lcs.discordbot.data.pterodactyl.GetDirectoryList
 import ca.fireball1725.lcs.discordbot.data.pterodactyl.GetDownloadBackup
 import ca.fireball1725.lcs.discordbot.data.pterodactyl.GetWorldBackup
 import com.google.gson.Gson
@@ -49,6 +50,70 @@ class Pterodactyl(
         // todo: check response code maybe
     }
 
+    fun getDirectoryList(
+        serverId: String,
+        path: String
+    ): GetDirectoryList? {
+        val commandUrl = "$serverUrl/api/client/servers/$serverId/files/list?directory=${path.replace("/", "%2F")}"
+
+        val request =
+            Request.Builder()
+                .url(commandUrl)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "application/json")
+                .addHeader("Authorization", "Bearer $apiKey")
+                .get()
+                .build()
+
+        val response = client.newCall(request).execute()
+
+        if (response.code != 200) {
+            return null
+        }
+
+        if (response.body == null) {
+            return null
+        }
+
+        val directoryList = Gson().fromJson(response.body!!.string(), GetDirectoryList::class.java)
+
+        response.close()
+
+        return directoryList
+    }
+
+    fun getFileContents(
+        serverId: String,
+        file: String
+    ): String? {
+        val commandUrl = "$serverUrl/api/client/servers/$serverId/files/contents?file=${file.replace("/", "%2F")}"
+
+        val request =
+            Request.Builder()
+                .url(commandUrl)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "application/json")
+                .addHeader("Authorization", "Bearer $apiKey")
+                .get()
+                .build()
+
+        val response = client.newCall(request).execute()
+
+        if (response.code != 200) {
+            return null
+        }
+
+        if (response.body == null) {
+            return null
+        }
+
+        val fileContents = response.body!!.string()
+
+        response.close()
+
+        return fileContents
+    }
+
     fun getServerBackup(serverId: String): GetWorldBackup? {
         val commandUrl = "$serverUrl/api/client/servers/$serverId/backups"
 
@@ -62,8 +127,6 @@ class Pterodactyl(
                 .build()
 
         val response = client.newCall(request).execute()
-
-        if (!response.isSuccessful) throw IOException("Unexpected code $response")
 
         if (response.code != 200) {
             return null
@@ -96,8 +159,6 @@ class Pterodactyl(
                 .build()
 
         val response = client.newCall(request).execute()
-
-        if (!response.isSuccessful) throw IOException("Unexpected code $response")
 
         if (response.code != 200) {
             return null

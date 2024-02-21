@@ -8,14 +8,20 @@ package ca.fireball1725.lcs.discordbot
 
 import ca.fireball1725.lcs.discordbot.data.Configuration
 import ca.fireball1725.lcs.discordbot.data.config.BotConfig
+import ca.fireball1725.lcs.discordbot.helpers.Database
 import ca.fireball1725.lcs.discordbot.mcserver.Pterodactyl
 import ca.fireball1725.lcs.discordbot.mcserver.Server
 import ca.fireball1725.lcs.discordbot.services.BotPermissions
+import ca.fireball1725.lcs.discordbot.tasks.JsonStatsProcessor
+import ca.fireball1725.lcs.discordbot.tasks.MembersProcessor
 import com.google.gson.Gson
 import dev.kord.common.annotation.KordPreview
+import dev.kord.core.entity.Guild
 import dev.kord.gateway.Intents
+import dev.kord.gateway.PrivilegedIntent
 import dev.kord.x.emoji.Emojis
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.runBlocking
 import me.jakejmattson.discordkt.dsl.CommandException
 import me.jakejmattson.discordkt.dsl.ListenerException
 import me.jakejmattson.discordkt.dsl.bot
@@ -25,6 +31,8 @@ import java.io.Reader
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
+import java.util.Timer
+import kotlin.concurrent.scheduleAtFixedRate
 
 private val configPath = FileSystems.getDefault().getPath("config", "botConfig.json")
 private val botConfig: BotConfig = loadBotConfig(configPath)
@@ -33,8 +41,16 @@ private val pterodactyl: Pterodactyl = Pterodactyl(botConfig.pterodactylToken, b
 
 private val servers: MutableMap<String, Server> = mutableMapOf()
 
+private val database: Database = Database()
+
+private var guilds: List<Guild>? = null
+
+@OptIn(PrivilegedIntent::class)
 @KordPreview
 suspend fun main(args: Array<String>) {
+    // Connect to the database
+    database.connect()
+
     // todo: Load the servers from database
     servers["b1107111"] =
         Server(
@@ -56,11 +72,11 @@ suspend fun main(args: Array<String>) {
             "Vault Hunters",
         )
 
-    servers["e932250f"] =
-        Server(
-            "e932250f",
-            "FTB Arcanum Institution",
-        )
+//    servers["e932250f"] =
+//        Server(
+//            "e932250f",
+//            "FTB Arcanum Institution",
+//        )
 
     val prop = System.getProperties()
 
@@ -106,7 +122,7 @@ suspend fun main(args: Array<String>) {
             theme = Color(0xFF69B4)
 
             // Configure the Discord Gateway intents for your bot.
-            intents = Intents.nonPrivileged
+            intents = Intents.all
 
             // Set the default permission required for slash commands.
             defaultPermissions = BotPermissions.EVERYONE
@@ -130,8 +146,8 @@ suspend fun main(args: Array<String>) {
 
         // This is run once the bot has finished setup and logged in.
         onStart {
-            val guilds = kord.guilds.toList()
-            println("Guilds: ${guilds.joinToString { it.name }}")
+            guilds = kord.guilds.toList()
+            println("Guilds: ${guilds!!.joinToString { it.name }}")
         }
 
         // Configure the locale for this bot.
@@ -139,6 +155,18 @@ suspend fun main(args: Array<String>) {
             helpName = "Help"
             helpCategory = "Utility"
             commandRecommendation = "Recommendation: {0}"
+        }
+
+        // Schedule processing json files
+        Timer().scheduleAtFixedRate(10000, 1000 * 60 * 15) { // 15 minutes
+            JsonStatsProcessor().processJsonStats()
+        }
+
+        // Schedule member updates
+        Timer().scheduleAtFixedRate(10000, 1000 * 60 * 15) {// 15 minutes
+            runBlocking {
+                MembersProcessor().updateMembersTable()
+            }
         }
     }
 }
@@ -166,4 +194,12 @@ fun getServer(serverId: String): Server? {
     } else {
         null
     }
+}
+
+fun getDatabase(): Database {
+    return database
+}
+
+fun getGuilds(): List<Guild>? {
+    return guilds
 }

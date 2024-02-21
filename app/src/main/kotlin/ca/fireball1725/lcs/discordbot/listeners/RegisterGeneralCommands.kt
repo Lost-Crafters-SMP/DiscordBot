@@ -22,12 +22,10 @@ fun registerGeneralCommands() =
                 .map { (_, server) -> server.getServerPrettyName() }
 
         if (botConfig().backupDownload.enabled) {
-            slash(prefix + "DownloadWorldSave", "Get a link to download the last backup from the minecraft server") {
+            slash("${prefix}DownloadWorldSave", "Get a link to download the last backup from the minecraft server") {
                 execute(ChoiceArg("Server", "Select the server", *downloadWorldSaveServers.toTypedArray())) {
                     val (first) = args
                     val result = DownloadBackup().getWorldBackup(first)
-
-                    println("Result: $result")
 
                     if (result != null) {
                         respond(result)

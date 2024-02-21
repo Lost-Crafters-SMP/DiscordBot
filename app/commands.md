@@ -16,3 +16,8 @@
 | Help     | [Command] | Display a help menu. |
 | info     |           | Bot info for app     |
 
+## profile
+| Commands       | Arguments | Description       |
+|----------------|-----------|-------------------|
+| devEditProfile |           | Edit your profile |
+

@@ -7,6 +7,7 @@
 package ca.fireball1725.lcs.discordbot.whitelist
 
 import ca.fireball1725.lcs.discordbot.botConfig
+import ca.fireball1725.lcs.discordbot.getDatabase
 import ca.fireball1725.lcs.discordbot.getPterodactyl
 import ca.fireball1725.lcs.discordbot.getServers
 import ca.fireball1725.lcs.discordbot.helpers.MinecraftUserHelper
@@ -83,7 +84,8 @@ class WhitelistProcessor {
         accountType: MemberType,
         reactionAddEvent: ReactionAddEvent,
     ) {
-        // todo: at some point add database
+        val discordId = reactionAddEvent.getMessage().author!!.id.value
+
         val successEmoji = Emojis["✅"]!!
 
         // Convert minecraft username to uuid
@@ -99,6 +101,23 @@ class WhitelistProcessor {
                     "please check the account name and try again...",
             )
             return
+        }
+
+        val member = getDatabase().getMemberFromDiscordId(discordId)
+        val whitelistCount = getDatabase().getMinecraftAccountCount(member!!.member_id)
+
+        // insert into database
+        getDatabase().addMinecraftAccount(
+            member.member_id,
+            minecraftUser.data.player.id,
+            minecraftUser.data.player.username,
+            accountType == MemberType.CAMERA_ACCOUNT,
+            whitelistCount == 0
+        )
+
+        if (whitelistCount == 0) {
+            getDatabase().updateProfileName(member.member_id, minecraftUser.data.player.username)
+            getDatabase().updateWebsiteVisibility(member.member_id, true)
         }
 
         // whitelist server account

@@ -21,6 +21,8 @@ data class BotConfig(
     val whitelist: BotConfigConfigWhitelist,
     @SerializedName("backup_download")
     val backupDownload: BotConfigConfigBackupDownload,
+    @SerializedName("database_configuration")
+    val databaseConfiguration: BotDatabaseConfiguration
 )
 
 data class BotConfigConfigWhitelist(
@@ -35,4 +37,13 @@ data class BotConfigConfigWhitelist(
 data class BotConfigConfigBackupDownload(
     @SerializedName("enabled")
     val enabled: Boolean,
+)
+
+data class BotDatabaseConfiguration(
+    @SerializedName("jdbc_url")
+    val jdbcUrl: String,
+    @SerializedName("database_username")
+    val databaseUsername: String,
+    @SerializedName("database_password")
+    val databasePassword: String,
 )
