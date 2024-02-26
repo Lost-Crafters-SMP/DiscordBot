@@ -21,7 +21,7 @@ data class GetDirectoryListData (
     var obj: String? = null,
 
     @SerializedName("attributes")
-    var attributes: GetWorldBackupDataAttributes? = GetWorldBackupDataAttributes()
+    var attributes: GetDirectoryListAttributes? = GetDirectoryListAttributes()
 )
 
 data class GetDirectoryListAttributes (

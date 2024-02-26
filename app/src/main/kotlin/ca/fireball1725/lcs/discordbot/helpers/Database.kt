@@ -183,44 +183,25 @@ class Database {
         return size
     }
 
-
-    fun updatePlayerStats(
-        memberId: UUID,
+    fun updateJsonFile(
         serverId: UUID,
-        timestamp: OffsetDateTime,
-        statsData: String,
+        fileName: String,
+        filePath: String,
+        fileTimeStamp: OffsetDateTime,
+        fileContent: String
     ) {
         val query = connection!!.prepareStatement(
-            "INSERT INTO stats " +
-                    "(member_id, server_id, timestamp, stats_data) " +
-                    "VALUES(?, ?, ?, ?) " +
-                    "ON CONFLICT (member_id, server_id) DO UPDATE " +
-                    "SET timestamp = EXCLUDED.timestamp, stats_data = EXCLUDED.stats_data"
-        )
-        query.setObject(1, memberId)
-        query.setObject(2, serverId)
-        query.setObject(3, timestamp)
-        query.setObject(4, statsData, Types.OTHER)
-        query.executeUpdate()
-    }
-
-    fun updateOtherData(
-        serverId: UUID,
-        name: String,
-        timestamp: OffsetDateTime,
-        data: String,
-    ) {
-        val query = connection!!.prepareStatement(
-            "INSERT INTO other_data " +
-                    "(server_id, name, timestamp, data) " +
-                    "VALUES(?, ?, ?, ?) " +
-                    "ON CONFLICT (server_id, name) DO UPDATE " +
-                    "SET timestamp = EXCLUDED.timestamp, data = EXCLUDED.data"
+            "INSERT INTO server_files " +
+                    "(server_uuid, file_name, file_path, file_timestamp, file_content) " +
+                    "VALUES (?, ?, ?, ?, ?) " +
+                    "ON CONFLICT (server_uuid, file_name, file_path) DO UPDATE " +
+                    "SET file_timestamp = EXCLUDED.file_timestamp, file_content = EXCLUDED.file_content"
         )
         query.setObject(1, serverId)
-        query.setObject(2, name)
-        query.setObject(3, timestamp)
-        query.setObject(4, data)
+        query.setString(2, fileName)
+        query.setString(3, filePath)
+        query.setObject(4, fileTimeStamp)
+        query.setObject(5, fileContent)
         query.executeUpdate()
     }
 
