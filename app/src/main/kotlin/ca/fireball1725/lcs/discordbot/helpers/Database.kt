@@ -172,7 +172,7 @@ class Database {
         val query = connection!!.prepareStatement(
             "SELECT record_uuid " +
                     "FROM minecraft_accounts " +
-                    "WHERE member_uuid='0615dcb7-f0ca-465b-8461-a79eb644b4dc'"
+                    "WHERE member_uuid='${memberId}'"
         )
         val resultSet = query.executeQuery()
 
