@@ -33,10 +33,12 @@ class WhitelistProcessor {
         }
 
         // todo: add logging maybe
+        println("Reaction event in whitelist channel")
 
         val userName = reactionAddEvent.getMessage().content
 
         // todo: validate the message doesn't have a ✅ from the bot already
+        // todo: validate the user doesn't already exist
 
         // Take an action depending on the emoji
         when (reactionAddEvent.emoji.name) {
@@ -129,6 +131,8 @@ class WhitelistProcessor {
                 )
             }
         }
+
+        // todo: Really need error checking, lol
 
         // whitelist camera account
         if (accountType == MemberType.CAMERA_ACCOUNT) {

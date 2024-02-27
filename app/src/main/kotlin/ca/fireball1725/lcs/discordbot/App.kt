@@ -52,13 +52,15 @@ suspend fun main(args: Array<String>) {
     database.connect()
 
     // todo: Load the servers from database
-    servers["b1107111"] =
-        Server(
-            "b1107111",
-            "SMP Season 1",
-            whitelistCameraEnabled = true,
-            backupDownloadEnabled = true,
-        )
+    // todo: really need to do this...
+    
+//    servers["b1107111"] =
+//        Server(
+//            "b1107111",
+//            "SMP Season 1",
+//            whitelistCameraEnabled = true,
+//            backupDownloadEnabled = true,
+//        )
 
     servers["80966603"] =
         Server(
@@ -77,13 +79,6 @@ suspend fun main(args: Array<String>) {
 //            "e932250f",
 //            "FTB Arcanum Institution",
 //        )
-
-    val prop = System.getProperties()
-
-    println(">>> Properties:")
-    prop.stringPropertyNames()
-        .associateWith { prop.getProperty(it) }
-        .forEach { println(">>> $it") }
 
     // println(App().greeting)
     bot(botConfig.discordToken) {
