@@ -20,11 +20,32 @@ class MembersProcessor {
         if (! getGuilds().isNullOrEmpty()) {
             val guild: Guild = getGuilds()!![0]
             println("Processing members from ${guild.name}")
+            val guildMembers = mutableListOf<Long>()
 
+            // Add members to the database that don't exist
             guild.members.toList().forEach {
+                var discordMemberId = it.id.value
                 if (RoleHelper().doesMemberHaveRole(it, 1143743030541680662U)) {
-                    println("Processing Discord User: ${it.displayName} Id: ${it.id.value}")
-                    getDatabase().updateMemberByDiscordId(it.id.value, it.displayName)
+                    println("Processing Discord User: ${it.displayName} Id: ${discordMemberId}")
+                    getDatabase().updateMemberByDiscordId(discordMemberId, it.displayName)
+                }
+                guildMembers.add(it.id.value.toLong())
+
+                // Add member roles to database
+                getDatabase().deleteDiscordRoles(discordMemberId)
+                it.roles.toList().forEach {
+                    getDatabase().addDiscordRole(discordMemberId, it.id.value)
+                }
+            }
+
+            // Disable members that left the discord
+            val membersList = getDatabase().getMembers()
+            if (membersList != null && membersList.size > 0) {
+                membersList.forEach {
+                    if (!guildMembers.contains(it.discord_id)) {
+                        println("Disabling Discord User: ${it.display_username} Id: ${it.discord_id}")
+                        getDatabase().disableMember(it.member_id)
+                    }
                 }
             }
         }

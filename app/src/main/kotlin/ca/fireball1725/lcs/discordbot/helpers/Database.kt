@@ -38,7 +38,11 @@ class Database {
     }
 
     fun getMembers(): MutableList<Member> {
-        val query = connection!!.prepareStatement("SELECT * FROM members")
+        val query = connection!!.prepareStatement(
+            "SELECT member_id, display_username, discord_id, pronouns, country, description, show_on_website, join_season " +
+                    "FROM members " +
+                    "ORDER BY display_username"
+        )
 
         val resultSet = query.executeQuery()
         val members = mutableListOf<Member>()
@@ -51,12 +55,25 @@ class Database {
                 pronouns = resultSet.getString("pronouns"),
                 country = resultSet.getString("country"),
                 description = resultSet.getString("description"),
-                show_on_website = resultSet.getBoolean("show_on_website")
+                show_on_website = resultSet.getBoolean("show_on_website"),
+                join_season = resultSet.getInt("join_season"),
             )
             members.add(member)
         }
 
         return members
+    }
+
+    fun disableMember(memberId: UUID) {
+        val query = connection!!.prepareStatement(
+            "UPDATE members " +
+                    "SET show_on_website = false " +
+                    "WHERE member_id = ?"
+        )
+
+        query.setObject(1, memberId)
+
+        query.executeUpdate()
     }
 
     fun getMemberFromDiscordId(discordId: ULong): Member? {
@@ -73,7 +90,8 @@ class Database {
                 pronouns = resultSet.getString("pronouns"),
                 country = resultSet.getString("country"),
                 description = resultSet.getString("description"),
-                show_on_website = resultSet.getBoolean("show_on_website")
+                show_on_website = resultSet.getBoolean("show_on_website"),
+                join_season = resultSet.getInt("join_season"),
             )
             members.add(member)
         }
@@ -205,6 +223,25 @@ class Database {
         query.executeUpdate()
     }
 
+    fun deleteDiscordRoles(discordId: ULong) {
+        val query = connection!!.prepareStatement(
+            "DELETE FROM discord_roles " +
+                    "WHERE discord_member_id='${discordId}'"
+        )
+        query.executeUpdate()
+    }
+
+    fun addDiscordRole(discordId: ULong, discordRoleId: ULong) {
+        val query = connection!!.prepareStatement(
+            "INSERT INTO discord_roles " +
+                    "(discord_member_id, discord_role_id) " +
+                    "VALUES (?, ?)"
+        )
+        query.setObject(1, discordId.toLong())
+        query.setObject(2, discordRoleId.toLong())
+        query.executeUpdate()
+    }
+
     fun getServers(): MutableList<Server> {
         val query = connection!!.prepareStatement(
             "SELECT server_id, pterodactyl_id, server_name, description, gamemode, pack_url, live_map_url, server_live, server_started, server_finished, game_name, game_url, game_icon " +
@@ -236,4 +273,5 @@ class Database {
 
         return servers
     }
+
 }

@@ -16,4 +16,5 @@ data class Member(
     val country: String?,
     val description: String?,
     val show_on_website: Boolean,
+    val join_season: Int,
 )

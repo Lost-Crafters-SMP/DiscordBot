@@ -88,6 +88,8 @@ class JsonStatsProcessor {
                 processServerDirectory(it.server_id, "/${levelName}/playerdata", it.pterodactyl_id, isRoot = true)
                 processServerDirectory(it.server_id, "/${levelName}/stats", it.pterodactyl_id, isRoot = true)
                 processServerDirectory(it.server_id, "/${levelName}/data", it.pterodactyl_id, isRoot = true)
+                processServerDirectory(it.server_id, "/mods", it.pterodactyl_id, isRoot = true)
+                processServerDirectory(it.server_id, "${levelName}/datapacks", it.pterodactyl_id, isRoot = true)
                 if (it.gamemode == "VH") {
                     // this is specific to vault hunters servers
                     processServerDirectory(it.server_id, "/playerSnapshots", it.pterodactyl_id, isRoot = true)
