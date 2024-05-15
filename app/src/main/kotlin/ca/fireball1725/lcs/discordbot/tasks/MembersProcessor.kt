@@ -25,7 +25,7 @@ class MembersProcessor {
             // Add members to the database that don't exist
             guild.members.toList().forEach {
                 var discordMemberId = it.id.value
-                if (RoleHelper().doesMemberHaveRole(it, 1143743030541680662U)) {
+                if (RoleHelper().doesMemberHaveRole(it, 1213953259837063248U)) {
                     println("Processing Discord User: ${it.displayName} Id: ${discordMemberId}")
                     getDatabase().updateMemberByDiscordId(discordMemberId, it.displayName)
                 }

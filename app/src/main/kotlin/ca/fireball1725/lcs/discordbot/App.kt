@@ -9,14 +9,17 @@ package ca.fireball1725.lcs.discordbot
 import ca.fireball1725.lcs.discordbot.data.Configuration
 import ca.fireball1725.lcs.discordbot.data.config.BotConfig
 import ca.fireball1725.lcs.discordbot.helpers.Database
+import ca.fireball1725.lcs.discordbot.helpers.DatabaseNew
 import ca.fireball1725.lcs.discordbot.mcserver.Pterodactyl
-import ca.fireball1725.lcs.discordbot.mcserver.Server
 import ca.fireball1725.lcs.discordbot.services.BotPermissions
+import ca.fireball1725.lcs.discordbot.tasks.InviteProcessor
 import ca.fireball1725.lcs.discordbot.tasks.JsonStatsProcessor
 import ca.fireball1725.lcs.discordbot.tasks.MembersProcessor
 import com.google.gson.Gson
 import dev.kord.common.annotation.KordPreview
 import dev.kord.core.entity.Guild
+import dev.kord.core.entity.InviteWithMetadata
+import dev.kord.core.event.guild.InviteCreateEvent
 import dev.kord.gateway.Intents
 import dev.kord.gateway.PrivilegedIntent
 import dev.kord.x.emoji.Emojis
@@ -25,6 +28,7 @@ import kotlinx.coroutines.runBlocking
 import me.jakejmattson.discordkt.dsl.CommandException
 import me.jakejmattson.discordkt.dsl.ListenerException
 import me.jakejmattson.discordkt.dsl.bot
+import me.jakejmattson.discordkt.dsl.listeners
 import me.jakejmattson.discordkt.locale.Language
 import java.awt.Color
 import java.io.Reader
@@ -39,9 +43,10 @@ private val botConfig: BotConfig = loadBotConfig(configPath)
 
 private val pterodactyl: Pterodactyl = Pterodactyl(botConfig.pterodactylToken, botConfig.pterodactylUrl)
 
-private val servers: MutableMap<String, Server> = mutableMapOf()
-
 private val database: Database = Database()
+private val databasenew = DatabaseNew().connect()
+
+private var invites = mutableMapOf<String, InviteWithMetadata>()
 
 private var guilds: List<Guild>? = null
 
@@ -51,36 +56,6 @@ suspend fun main(args: Array<String>) {
     // Connect to the database
     database.connect()
 
-    // todo: Load the servers from database
-    // todo: really need to do this...
-
-//    servers["b1107111"] =
-//        Server(
-//            "b1107111",
-//            "SMP Season 1",
-//            whitelistCameraEnabled = true,
-//            backupDownloadEnabled = true,
-//        )
-
-    servers["80966603"] =
-        Server(
-            "80966603",
-            "Creative Test Server",
-        )
-
-    servers["7f01a766"] =
-        Server(
-            "7f01a766",
-            "Vault Hunters",
-        )
-
-//    servers["e932250f"] =
-//        Server(
-//            "e932250f",
-//            "FTB Arcanum Institution",
-//        )
-
-    // println(App().greeting)
     bot(botConfig.discordToken) {
         val configuration = data("config/config.json") { Configuration() }
 
@@ -143,6 +118,9 @@ suspend fun main(args: Array<String>) {
         onStart {
             guilds = kord.guilds.toList()
             println("Guilds: ${guilds!!.joinToString { it.name }}")
+
+            invites = guilds!![0].invites.toList().associateBy { it.code }.toMutableMap()
+            println("Invites: ${invites.size} invites found")
         }
 
         // Configure the locale for this bot.
@@ -153,14 +131,26 @@ suspend fun main(args: Array<String>) {
         }
 
         // Schedule processing json files
-        Timer().scheduleAtFixedRate(10000, 1000 * 60 * 15) { // 15 minutes
-            JsonStatsProcessor().processJsonStats()
+        if (botConfig.tasks.jsonProcessorEnabled) {
+            Timer().scheduleAtFixedRate(10000, 1000 * 60 * 15) { // 15 minutes
+                JsonStatsProcessor().processJsonStats()
+            }
         }
 
         // Schedule member updates
-        Timer().scheduleAtFixedRate(10000, 1000 * 60 * 15) {// 15 minutes
-            runBlocking {
-                MembersProcessor().updateMembersTable()
+        if (botConfig.tasks.memberProcessorEnabled) {
+            Timer().scheduleAtFixedRate(10000, 1000 * 60 * 15) { // 15 minutes
+                runBlocking {
+                    MembersProcessor().updateMembersTable()
+                }
+            }
+        }
+
+        if (botConfig.tasks.inviteProcessorEnabled) {
+            Timer().scheduleAtFixedRate(10000, 1000 * 60 * 60) { // 1 hour
+                runBlocking {
+                    InviteProcessor().checkForInviteCodes()
+                }
             }
         }
     }
@@ -179,22 +169,27 @@ fun getPterodactyl(): Pterodactyl {
     return pterodactyl
 }
 
-fun getServers(): MutableMap<String, Server> {
-    return servers
-}
-
-fun getServer(serverId: String): Server? {
-    return if (serverId.contains(serverId)) {
-        servers[serverId]
-    } else {
-        null
-    }
-}
-
 fun getDatabase(): Database {
     return database
 }
 
 fun getGuilds(): List<Guild>? {
     return guilds
+}
+
+fun inviteListener() = listeners {
+    on<InviteCreateEvent> {
+        updateInvites()
+    }
+}
+
+suspend fun updateInvites() {
+    invites = guilds!![0].invites.toList().associateBy { it.code }.toMutableMap()
+}
+fun getInvites(): Map<String, InviteWithMetadata> {
+    return invites
+}
+
+fun getNewDatabase(): org.ktorm.database.Database {
+    return databasenew
 }

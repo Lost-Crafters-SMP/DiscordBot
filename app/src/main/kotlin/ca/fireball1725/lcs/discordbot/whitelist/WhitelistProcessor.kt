@@ -9,7 +9,6 @@ package ca.fireball1725.lcs.discordbot.whitelist
 import ca.fireball1725.lcs.discordbot.botConfig
 import ca.fireball1725.lcs.discordbot.getDatabase
 import ca.fireball1725.lcs.discordbot.getPterodactyl
-import ca.fireball1725.lcs.discordbot.getServers
 import ca.fireball1725.lcs.discordbot.helpers.MinecraftUserHelper
 import ca.fireball1725.lcs.discordbot.helpers.RoleHelper
 import dev.kord.core.entity.ReactionEmoji
@@ -19,6 +18,7 @@ import dev.kord.x.emoji.Emojis
 import dev.kord.x.emoji.from
 import me.jakejmattson.discordkt.extensions.addReactions
 import me.jakejmattson.discordkt.extensions.sendPrivateMessage
+import java.lang.Exception
 
 class WhitelistProcessor {
     suspend fun reactionAddEvent(reactionAddEvent: ReactionAddEvent) {
@@ -123,32 +123,40 @@ class WhitelistProcessor {
         }
 
         // whitelist server account
-        getServers().forEach { (_, server) ->
-            if (server.isWhitelistPlayerEnabled()) {
-                getPterodactyl().sendCommand(
-                    server.getServerId(),
-                    "/whitelist add $username",
-                )
+        getDatabase().getServers().forEach {
+            val pterodactylId = it.pterodactyl_id.toString().split("-")[0]
+            val serverActive = it.server_live
+
+            if (serverActive) {
+                try {
+                    getPterodactyl().sendCommand(
+                        pterodactylId,
+                        "/whitelist add $username"
+                    )
+                } catch (e: Exception) {
+                    println("Error when trying to whitelist on server")
+                    println(e.message)
+                }
             }
         }
 
         // todo: Really need error checking, lol
 
         // whitelist camera account
-        if (accountType == MemberType.CAMERA_ACCOUNT) {
-            getServers().forEach { (_, server) ->
-                if (server.isWhitelistCameraEnabled()) {
-                    getPterodactyl().sendCommand(
-                        server.getServerId(),
-                        "/lp user ${minecraftUser.data.player.id} group add camera",
-                    )
-                    getPterodactyl().sendCommand(
-                        server.getServerId(),
-                        "/scoreboard players set $username player_tags 99",
-                    )
-                }
-            }
-        }
+//        if (accountType == MemberType.CAMERA_ACCOUNT) {
+//            getServers().forEach { (_, server) ->
+//                if (server.isWhitelistCameraEnabled()) {
+//                    getPterodactyl().sendCommand(
+//                        server.getServerId(),
+//                        "/lp user ${minecraftUser.data.player.id} group add camera",
+//                    )
+//                    getPterodactyl().sendCommand(
+//                        server.getServerId(),
+//                        "/scoreboard players set $username player_tags 99",
+//                    )
+//                }
+//            }
+//        }
 
         reactionAddEvent.getMessage().addReactions(ReactionEmoji.from(successEmoji))
     }

@@ -65,6 +65,14 @@ class JsonStatsProcessor {
                                 getDatabase().updateJsonFile(serverId, filenameString, path, fileTimestamp, fileContents)
                             }
                         }
+
+                        if (fileExtention == "img") {
+                            val fileContents: String? = getPterodactyl().getFileContents(pterodactylServerId, "${path}/${filename}")
+                            if (fileContents != null) {
+                                println("Processing ${path}/${filename}...")
+                                getDatabase().updateJsonFile(serverId, filename, path, fileTimestamp, fileContents)
+                            }
+                        }
                     }
                 }
             }

@@ -22,7 +22,11 @@ data class BotConfig(
     @SerializedName("backup_download")
     val backupDownload: BotConfigConfigBackupDownload,
     @SerializedName("database_configuration")
-    val databaseConfiguration: BotDatabaseConfiguration
+    val databaseConfiguration: BotDatabaseConfiguration,
+    @SerializedName("tasks")
+    val tasks: BotTaskConfiguration,
+    @SerializedName("invite_configuration")
+    val inviteConfiguration: BotInviteConfiguration
 )
 
 data class BotConfigConfigWhitelist(
@@ -46,4 +50,20 @@ data class BotDatabaseConfiguration(
     val databaseUsername: String,
     @SerializedName("database_password")
     val databasePassword: String,
+)
+
+data class BotTaskConfiguration(
+    @SerializedName("json_processor")
+    val jsonProcessorEnabled: Boolean,
+    @SerializedName("member_processor")
+    val memberProcessorEnabled: Boolean,
+    @SerializedName("invite_processor")
+    val inviteProcessorEnabled: Boolean,
+)
+
+data class BotInviteConfiguration(
+    @SerializedName("new_member_info_channel_id")
+    val newMemberInfoChannelId: Long,
+    @SerializedName("number_invites_on_hand")
+    val readyInviteCount: Int,
 )
