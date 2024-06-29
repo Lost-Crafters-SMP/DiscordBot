@@ -67,19 +67,15 @@ class Pterodactyl(
 
         val response = client.newCall(request).execute()
 
-        if (response.code != 200) {
-            return null
+        response.use { // use statement ensures the response is closed
+            if (response.code != 200) {
+                return null
+            }
+
+            response.body ?: return null
+
+            return Gson().fromJson(response.body!!.string(), GetDirectoryList::class.java)
         }
-
-        if (response.body == null) {
-            return null
-        }
-
-        val directoryList = Gson().fromJson(response.body!!.string(), GetDirectoryList::class.java)
-
-        response.close()
-
-        return directoryList
     }
 
     fun getFileContents(
@@ -99,19 +95,17 @@ class Pterodactyl(
 
         val response = client.newCall(request).execute()
 
-        if (response.code != 200) {
-            return null
+
+
+        response.use { // use statement ensures the response is closed
+            if (response.code != 200) {
+                return null
+            }
+
+            val responseBody = response.body ?: return null
+
+            return responseBody.string()
         }
-
-        if (response.body == null) {
-            return null
-        }
-
-        val fileContents = response.body!!.string()
-
-        response.close()
-
-        return fileContents
     }
 
     fun getServerBackup(serverId: String): GetWorldBackup? {
@@ -128,19 +122,15 @@ class Pterodactyl(
 
         val response = client.newCall(request).execute()
 
-        if (response.code != 200) {
-            return null
+        response.use { // use statement ensures the response is closed
+            if (response.code != 200) {
+                return null
+            }
+
+            val responseBody = response.body ?: return null
+
+            return Gson().fromJson(responseBody.string(), GetWorldBackup::class.java)
         }
-
-        if (response.body == null) {
-            return null
-        }
-
-        val downloadBackupResponse = Gson().fromJson(response.body!!.string(), GetWorldBackup::class.java)
-
-        response.close()
-
-        return downloadBackupResponse
     }
 
     fun getDownloadBackup(
@@ -160,19 +150,17 @@ class Pterodactyl(
 
         val response = client.newCall(request).execute()
 
-        if (response.code != 200) {
-            return null
+        response.use { // use statement ensures the response is closed
+            if (response.code != 200) {
+                return null
+            }
+
+            response.body ?: return null
+
+            val downloadBackupResponse = Gson().fromJson(response.body!!.string(), GetDownloadBackup::class.java)
+
+            return downloadBackupResponse.downloadBackupAttributes!!.url
         }
-
-        if (response.body == null) {
-            return null
-        }
-
-        val downloadBackupResponse = Gson().fromJson(response.body!!.string(), GetDownloadBackup::class.java)
-
-        response.close()
-
-        return downloadBackupResponse.downloadBackupAttributes!!.url
     }
 
     private fun processRequest(request: Request): Response {

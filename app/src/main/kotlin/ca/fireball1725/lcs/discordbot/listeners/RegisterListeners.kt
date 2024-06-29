@@ -8,6 +8,7 @@ package ca.fireball1725.lcs.discordbot.listeners
 
 import ca.fireball1725.lcs.discordbot.botConfig
 import ca.fireball1725.lcs.discordbot.tasks.InviteProcessor
+import ca.fireball1725.lcs.discordbot.tasks.MembersProcessor
 import ca.fireball1725.lcs.discordbot.whitelist.WhitelistProcessor
 import dev.kord.core.event.guild.MemberJoinEvent
 import dev.kord.core.event.message.MessageCreateEvent
@@ -28,4 +29,6 @@ fun registerListeners() =
             on<MemberJoinEvent> { InviteProcessor().memberJoinEvent(this) } // refresh invite codes
             on<MessageCreateEvent> { InviteProcessor().channelMessageEvent(this) } // check for invite metadata message
         }
+
+        on<MemberJoinEvent> { MembersProcessor().updateMembersTable() }
     }
