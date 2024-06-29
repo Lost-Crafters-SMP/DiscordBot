@@ -11,6 +11,7 @@ import ca.fireball1725.lcs.discordbot.tasks.InviteProcessor
 import ca.fireball1725.lcs.discordbot.tasks.MembersProcessor
 import ca.fireball1725.lcs.discordbot.whitelist.WhitelistProcessor
 import dev.kord.core.event.guild.MemberJoinEvent
+import dev.kord.core.event.guild.MemberLeaveEvent
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.core.event.message.ReactionAddEvent
 import dev.kord.core.event.message.ReactionRemoveEvent
@@ -30,5 +31,7 @@ fun registerListeners() =
             on<MessageCreateEvent> { InviteProcessor().channelMessageEvent(this) } // check for invite metadata message
         }
 
+        // Update the members table when someone joins or leaves
         on<MemberJoinEvent> { MembersProcessor().updateMembersTable() }
+        on<MemberLeaveEvent> { MembersProcessor().updateMembersTable() }
     }

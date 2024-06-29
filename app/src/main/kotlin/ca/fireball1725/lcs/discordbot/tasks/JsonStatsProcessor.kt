@@ -22,8 +22,11 @@ class JsonStatsProcessor {
     }
 
     fun processServerDirectory(serverId: UUID, path: String, pterodactylId: UUID, isRoot: Boolean = false, inputTimestamp: OffsetDateTime = OffsetDateTime.now()) {
-        if (path.contains("lootr")) // skip lootr directory as we don't need this and it's large
+        val skipDirectories = listOf("lootr", "extended_drawers", "wiredredstone")
+        if (skipDirectories.any { path.contains(it) }) {
+            println("Skipping directory ${path}. It is in the skipDirectories list")
             return
+        }
 
         val pterodactylServerId = pterodactylId.toString().split("-")[0];
 
@@ -102,6 +105,8 @@ class JsonStatsProcessor {
                     // this is specific to vault hunters servers
                     processServerDirectory(it.server_id, "/playerSnapshots", it.pterodactyl_id, isRoot = true)
                 }
+
+                println("Finished with ${pterodactylId}")
             }
         }
     }
